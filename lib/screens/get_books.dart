@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:postman_app/model/dataArgument.dart';
 import 'package:postman_app/features/books/data/book.dart';
+import 'package:postman_app/provider/loginprovider.dart';
 import 'package:postman_app/screens/addbook.dart';
+import 'package:postman_app/screens/login_screen.dart';
 import 'package:postman_app/services/apiservice/apiservice.dart';
 import 'package:http/http.dart' as http;
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:postman_app/util/toast.dart';
+import 'package:provider/provider.dart';
 
 late Future<List<Book>> _books;
 
-void toast(String msg){
-  Fluttertoast.showToast(
-      msg: msg,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.grey,
-      textColor: Colors.white,
-      fontSize: 16.0
-  );
-
-}
-
 class GetBooks extends StatefulWidget {
-  const GetBooks({Key? key}) : super(key: key);
+
+  const GetBooks({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<GetBooks> createState() => _GetBooksState();
@@ -32,7 +26,6 @@ class _GetBooksState extends State<GetBooks> {
 
   @override
   void initState() {
-    // TODO: implement initState
     _books = ApiService.fetchBook();
     super.initState();
   }
@@ -40,8 +33,29 @@ class _GetBooksState extends State<GetBooks> {
   @override
   Widget build(BuildContext context) {
 
+    final AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Postmanlab Books')),
+
+      appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text('Books'),
+          actions:  [
+          GestureDetector(
+              onTap:() async {
+                await authProvider.logout();
+                Navigator.push(
+                  context, MaterialPageRoute(builder: (context) =>  LoginScreen()),
+                );
+                },
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(Icons.logout),
+              )
+          ),
+        ],
+      ),
+
       body: FutureBuilder<List<Book>>(
 
         future: _books,
@@ -135,7 +149,8 @@ class _GetBooksState extends State<GetBooks> {
       floatingActionButton:  FloatingActionButton(
         onPressed: ()  {
            Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const AddBookWidget()));
+              context, MaterialPageRoute(builder: (context) => const AddBookWidget()),
+           );
         },
         child: const Icon(Icons.add),
       ),

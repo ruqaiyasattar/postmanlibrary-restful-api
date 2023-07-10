@@ -7,7 +7,7 @@ import 'package:postman_app/model/dataArgument.dart';
 import 'package:postman_app/features/books/data/book.dart';
 import 'package:postman_app/screens/get_books.dart';
 import 'package:postman_app/services/apiservice/apiservice.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:postman_app/util/toast.dart';
 
 const baseURL = 'https://library-api.postmanlabs.com/';
 
@@ -16,19 +16,6 @@ Map<String, String> headers = {
   'Authorization' :'postmanrulz',
   "Content-Type": "application/json"// add the authorization header
 };
-
-void toast(String msg){
-  Fluttertoast.showToast(
-      msg: msg,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.grey,
-      textColor: Colors.white,
-      fontSize: 16.0
-  );
-
-}
 
 class AddBookWidget extends HookWidget {
   const AddBookWidget({ Key? key}) : super(key: key);
