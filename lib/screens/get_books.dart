@@ -4,7 +4,10 @@ import 'package:postman_app/model/dataArgument.dart';
 import 'package:postman_app/features/books/data/book.dart';
 import 'package:postman_app/provider/loginprovider.dart';
 import 'package:postman_app/screens/addbook.dart';
+import 'package:postman_app/screens/locationtrackerscreen.dart';
 import 'package:postman_app/screens/login_screen.dart';
+import 'package:postman_app/screens/ordertrackingpage.dart';
+import 'package:postman_app/screens/tap_pay_widget.dart';
 import 'package:postman_app/services/apiservice/apiservice.dart';
 import 'package:http/http.dart' as http;
 import 'package:postman_app/util/toast.dart';
@@ -41,7 +44,7 @@ class _GetBooksState extends State<GetBooks> {
           automaticallyImplyLeading: false,
           title: const Text('Books'),
           actions:  [
-          GestureDetector(
+            GestureDetector(
               onTap:() async {
                 await authProvider.logout();
                 Navigator.push(
@@ -53,6 +56,28 @@ class _GetBooksState extends State<GetBooks> {
                 child: Icon(Icons.logout),
               )
           ),
+            GestureDetector(
+              onTap: (){
+                Navigator.push(
+                  context, MaterialPageRoute(builder: (context) =>  const OrderTrackingPage()),
+                );
+              },
+              child: const Padding(
+                padding:  EdgeInsets.all(8.0),
+                child: Icon(Icons.location_searching),
+              ),
+            ),
+            GestureDetector(
+              onTap: (){
+                Navigator.push(
+                  context, MaterialPageRoute(builder: (context) =>  const PayTapWidget()),
+                );
+              },
+              child: const Padding(
+                padding:  EdgeInsets.all(8.0),
+                child: Icon(Icons.payments),
+              ),
+            )
         ],
       ),
 
