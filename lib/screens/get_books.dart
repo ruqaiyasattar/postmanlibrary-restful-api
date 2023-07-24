@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:postman_app/constants/app_constant.dart';
 import 'package:postman_app/model/dataArgument.dart';
 import 'package:postman_app/features/books/data/book.dart';
 import 'package:postman_app/provider/loginprovider.dart';
 import 'package:postman_app/screens/addbook.dart';
-import 'package:postman_app/screens/locationtrackerscreen.dart';
 import 'package:postman_app/screens/login_screen.dart';
 import 'package:postman_app/screens/ordertrackingpage.dart';
 import 'package:postman_app/screens/tap_pay_widget.dart';
 import 'package:postman_app/services/apiservice/apiservice.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io' as io;
 import 'package:postman_app/util/toast.dart';
 import 'package:provider/provider.dart';
+import 'package:salesiq_mobilisten/launcher.dart';
+import 'package:salesiq_mobilisten/salesiq_mobilisten.dart';
 
 late Future<List<Book>> _books;
 
@@ -25,11 +27,57 @@ class GetBooks extends StatefulWidget {
   State<GetBooks> createState() => _GetBooksState();
 }
 
+Future<void> initMobiListen({bool showChat = false}) async {
+
+  LauncherProperties launcherProperties = LauncherProperties(LauncherMode.floating);
+  // launcherProperties.icon = "ic_upload";
+  ZohoSalesIQ.setLauncherPropertiesForAndroid(launcherProperties);
+  launcherProperties.horizontalDirection = Horizontal.right;
+  ZohoSalesIQ.setLanguage("en");
+  ZohoSalesIQ.enableInAppNotification();
+  ZohoSalesIQ.eventChannel;
+  ZohoSalesIQ.setFAQVisibility(true);
+  int unreadCount = await ZohoSalesIQ.chatUnreadCount;
+
+
+  ZohoSalesIQ.setChatTitle("Chat");
+  ZohoSalesIQ.chatUnreadCount;
+  ZohoSalesIQ.getArticleCategories();
+  ZohoSalesIQ.setRatingVisibility(true);
+
+  //ZohoSalesIQ.setFeedbackVisibility(true);
+  ZohoSalesIQ.showOperatorImageInChat(true);
+  ZohoSalesIQ.chatEventChannel;
+  //ZohoSalesIQ.setQuestion("Drop your name and email then our representative will assist you");
+
+
+  //ZohoSalesIQ.getArticles();
+  String appKeyAndroid;
+  String accessKeyAndroid;
+  if (io.Platform.isIOS || io.Platform.isAndroid) {
+     appKeyAndroid = appKey;
+     accessKeyAndroid = accessKey;
+    ZohoSalesIQ.init(appKeyAndroid, accessKeyAndroid).then((_) {
+      // initialization successful
+      print("initialization successful ===>> : $showChat");
+      ZohoSalesIQ.showLauncher(showChat);
+    }).catchError((error) {
+      // initialization failed
+      print("initialization failed ===>> : $error");
+    });
+    ZohoSalesIQ.setThemeColorForiOS("0xff3B3A7E");
+  }
+
+
+}
+
+
 class _GetBooksState extends State<GetBooks> {
 
   @override
   void initState() {
     _books = ApiService.fetchBook();
+    initMobiListen(showChat: true);
     super.initState();
   }
 
@@ -38,6 +86,7 @@ class _GetBooksState extends State<GetBooks> {
 
     final AuthProvider authProvider = Provider.of<AuthProvider>(context);
 
+    initMobiListen(showChat: true);
     return Scaffold(
 
       appBar: AppBar(
