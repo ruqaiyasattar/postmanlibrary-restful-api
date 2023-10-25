@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:postman_app/constants/app_constant.dart';
 import 'package:postman_app/model/dataArgument.dart';
@@ -7,6 +8,8 @@ import 'package:postman_app/screens/addbook.dart';
 import 'package:postman_app/screens/login_screen.dart';
 import 'package:postman_app/screens/ordertrackingpage.dart';
 import 'package:postman_app/screens/tap_pay_widget.dart';
+import 'package:postman_app/screens/tmaraPaymentScreen.dart';
+import 'package:postman_app/screens/video_play_screen.dart';
 import 'package:postman_app/services/apiservice/apiservice.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io' as io;
@@ -27,7 +30,9 @@ class GetBooks extends StatefulWidget {
   State<GetBooks> createState() => _GetBooksState();
 }
 
-Future<void> initMobiListen({bool showChat = false}) async {
+Future<void> initMobiListen({
+  bool showChat = false,
+}) async {
 
   LauncherProperties launcherProperties = LauncherProperties(LauncherMode.floating);
   // launcherProperties.icon = "ic_upload";
@@ -39,7 +44,6 @@ Future<void> initMobiListen({bool showChat = false}) async {
   ZohoSalesIQ.setFAQVisibility(true);
   int unreadCount = await ZohoSalesIQ.chatUnreadCount;
 
-
   ZohoSalesIQ.setChatTitle("Chat");
   ZohoSalesIQ.chatUnreadCount;
   ZohoSalesIQ.getArticleCategories();
@@ -50,7 +54,6 @@ Future<void> initMobiListen({bool showChat = false}) async {
   ZohoSalesIQ.chatEventChannel;
   //ZohoSalesIQ.setQuestion("Drop your name and email then our representative will assist you");
 
-
   //ZohoSalesIQ.getArticles();
   String appKeyAndroid;
   String accessKeyAndroid;
@@ -59,16 +62,18 @@ Future<void> initMobiListen({bool showChat = false}) async {
      accessKeyAndroid = accessKey;
     ZohoSalesIQ.init(appKeyAndroid, accessKeyAndroid).then((_) {
       // initialization successful
-      print("initialization successful ===>> : $showChat");
+      if (kDebugMode) {
+        print("initialization successful ===>> : $showChat");
+      }
       ZohoSalesIQ.showLauncher(showChat);
     }).catchError((error) {
       // initialization failed
-      print("initialization failed ===>> : $error");
+      if (kDebugMode) {
+        print("initialization failed ===>> : $error");
+      }
     });
     ZohoSalesIQ.setThemeColorForiOS("0xff3B3A7E");
   }
-
-
 }
 
 
@@ -94,13 +99,42 @@ class _GetBooksState extends State<GetBooks> {
           title: const Text('Books'),
           actions:  [
             GestureDetector(
+                onTap:() async {
+                  // await authProvider.logout();
+                 /* Navigator.push(
+                    context, MaterialPageRoute(
+                    builder: (context) =>  const TmaraPaymentScreen(),
+                  ),
+                  );*/
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+
+                  child: Icon(Icons.paypal_sharp, color: Colors.deepOrange,),
+                )
+            ),
+            GestureDetector(
+                onTap:() async {
+                 // await authProvider.logout();
+                  Navigator.push(
+                    context, MaterialPageRoute(
+                      builder: (context) =>  VideoPlayerScreen(),
+                  ),
+                  );
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.logout),
+                )
+            ),
+            GestureDetector(
               onTap:() async {
                 await authProvider.logout();
                 Navigator.push(
                   context, MaterialPageRoute(builder: (context) =>  LoginScreen()),
                 );
                 },
-              child: const Padding(
+                child: const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Icon(Icons.logout),
               )
@@ -126,7 +160,7 @@ class _GetBooksState extends State<GetBooks> {
                 padding:  EdgeInsets.all(8.0),
                 child: Icon(Icons.payments),
               ),
-            )
+            ),
         ],
       ),
 
@@ -152,7 +186,7 @@ class _GetBooksState extends State<GetBooks> {
                   onTap: (){
                     Navigator.push(
                         context, MaterialPageRoute(
-                        builder: (context) => const AddBookWidget(),
+                        builder: (context) =>  AddBookWidget(),
                         settings: RouteSettings(
                         arguments: data_Arguments(
                           bookName: item.title,
